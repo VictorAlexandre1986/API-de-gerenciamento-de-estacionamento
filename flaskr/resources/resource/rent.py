@@ -67,7 +67,7 @@ class RentRegisterResource(MethodResource, Resource):
 
         current_datetime = datetime.now()
         kwargs['rent_date_final'] = current_datetime
-        kwargs['total'] = (current_datetime - user.rent_date_initial).hours * 10
+        kwargs['total'] = (current_datetime - user.rent_date_initial).total_seconds() * 0.125
         user.update(**kwargs)
         return make_response(rent_schema.dump(user), 200)
 

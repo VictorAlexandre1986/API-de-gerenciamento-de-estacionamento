@@ -23,10 +23,19 @@ class RentGetDateRegisterResource(MethodResource, Resource):
     @jwt_required()
     def get(self, **kwargs):
         date = kwargs["date"]
-
-        rent = RentModel.find_by_date(date).all()
-        if rent:
-            return make_response(rent_schema.dump(rent), 200)
+        #Receber a data sem as horas para buscar todos os registros daquele dia
+        rents = RentModel.find_by_date(date).all()
+        if rents:
+            total=0
+            # return make_response(rent_schema.dump(rent), 200)
+            for rent in rents:
+                obj = rent_schema.dump(rent)
+                saida = obj['rent_date_final'] = datetime.strptime(obj['rent_date_final'], '%Y-%m-%dT%H:%M:%S')
+                entrada = obj['rent_date_initial'] = datetime.strptime(obj['rent_date_initial'], '%Y-%m-%dT%H:%M:%S')
+                total_minutes = (saida - entrada).total_seconds() / 60
+                total_a_receber = total_minutes * 0.125
+                total+=total_a_receber
+            return make_response({"total_recebido_no_mes ": total}, 200)
         return make_response({'message': 'Item not found'}, 404)
     
     
