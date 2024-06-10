@@ -13,7 +13,7 @@ from flaskr.schemas.rent import (RentResponseDateSchema,RentDateRequestGetSchema
 
 
 @doc(description='Rent Register API', tags=['Rent'])
-class RentGetDateRegisterResource(MethodResource, Resource):
+class RentSangriaRegisterResource(MethodResource, Resource):
 
    
     @marshal_with(RentResponseDateSchema, code=200)
