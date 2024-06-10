@@ -166,9 +166,9 @@ docker-compose down --remove-orphans
   ```
   3. To build a new migration, for example, "Initial migration"
   ```bash
+    python db stamp head
     python -m flask db migrate -m "Initial migration."
   ```
-
   4. Then you can apply the migrations created in the database
   ```bash
     python -m flask db upgrade
