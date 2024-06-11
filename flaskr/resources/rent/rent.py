@@ -22,8 +22,8 @@ class RentRegisterResource(MethodResource, Resource):
     @use_kwargs(RentRequestPostSchema, location=('json'))
     @doc(description='Register a new rent')
     def post(self, **kwargs):
-        if RentModel.find_by_username(kwargs['username']):
-            return make_response({"message": "Username already exists"}, 400)
+        if not RentModel.find_by_username(kwargs['username']):
+            return make_response({"message": "Username no exists"}, 400)
 
         rent = RentModel(**kwargs)
         rent.save()
@@ -67,7 +67,7 @@ class RentRegisterResource(MethodResource, Resource):
 
         current_datetime = datetime.now()
         kwargs['rent_date_final'] = current_datetime
-        kwargs['total'] = (current_datetime - user.rent_date_initial).total_seconds() * 0.125
+        kwargs['total'] = ((current_datetime - user.rent_date_initial).total_seconds() / 60 ) * 0.125
         user.update(**kwargs)
         return make_response(rent_schema.dump(user), 200)
 

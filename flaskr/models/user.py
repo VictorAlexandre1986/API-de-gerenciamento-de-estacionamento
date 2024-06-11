@@ -24,10 +24,20 @@ class UserModel(db_instance.Model):
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
+    
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
     @classmethod
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
+    
+    @db_persist
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        db_instance.session.commit()
 
     @staticmethod
     def init_data():
