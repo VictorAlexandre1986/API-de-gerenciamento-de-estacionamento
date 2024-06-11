@@ -1,6 +1,6 @@
 # Flask Template Project
 
-This is built with Flask, Flask-RESTful, Flask-JWT-Extended, Flask-SQLAlchemy and PostgreSQL.
+This is built with Flask, Flask-RESTful, Flask-JWT-Extended, Flask-SQLAlchemy, Marshmallow, Bcrypt and SQLite.
 
 ## Pre-requirements
 - [Python 3.12.x LTS](https://www.python.org/downloads/)
