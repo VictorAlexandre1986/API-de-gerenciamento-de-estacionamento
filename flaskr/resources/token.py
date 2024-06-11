@@ -7,6 +7,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 get_jwt, get_jwt_identity, jwt_required)
 from flask_restful import Resource
 from marshmallow import fields
+from flaskr.utils import hash_password  
 
 from flaskr.models.token import TokenBlocklistModel
 from flaskr.models.user import UserModel
@@ -24,7 +25,7 @@ class TokenResource(MethodResource, Resource):
     @doc(description='Login and generate new access and refresh token')
     def post(self, **kwargs):
         username = kwargs["username"]
-        password = kwargs["password"]
+        password = hash_password(kwargs['password'])
         # Query your database for username and password
         user = UserModel.query.filter_by(username=username, password=password).first()
         if user is None:

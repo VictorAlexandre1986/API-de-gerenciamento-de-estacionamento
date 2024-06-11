@@ -4,6 +4,7 @@ from flask_apispec.views import MethodResource
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from marshmallow import fields
+from flaskr.utils import hash_password
 
 from flaskr.models.user import UserModel
 from flaskr.schemas.token import MessageSchema
@@ -21,6 +22,8 @@ class UserRegisterResource(MethodResource, Resource):
     def post(self, **kwargs):
         if UserModel.find_by_username(kwargs['username']):
             return make_response({"message": "Username already exists"}, 400)
+        
+        kwargs['password'] = hash_password(kwargs['password'])
 
         user = UserModel(**kwargs)
         user.save()
