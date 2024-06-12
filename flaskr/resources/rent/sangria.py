@@ -5,6 +5,8 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from marshmallow import fields
 
+from flaskr.utils.log import logging
+
 from datetime import datetime
 
 from flaskr.models.rent import RentModel
@@ -35,7 +37,9 @@ class RentSangriaRegisterResource(MethodResource, Resource):
                 total_minutes = (saida - entrada).total_seconds() / 60
                 total_a_receber = total_minutes * 0.125
                 total+=total_a_receber
+            logging.info('Rent found by date in database in sangria.py')
             return make_response({"total_recebido_no_mes ": total}, 200)
+        logging.error('Rent not found by date in database in sangria.py')
         return make_response({'message': 'Item not found'}, 404)
     
     

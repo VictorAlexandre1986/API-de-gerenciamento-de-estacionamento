@@ -5,6 +5,8 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from marshmallow import fields
 
+from flaskr.utils.log import logging
+
 from datetime import datetime
 
 from flaskr.models.rent import RentModel
@@ -23,11 +25,12 @@ class RentRegisterResource(MethodResource, Resource):
     @doc(description='Register a new rent')
     def post(self, **kwargs):
         if not RentModel.find_by_username(kwargs['username']):
+            logging.error('Username no exists in database')
             return make_response({"message": "Username no exists"}, 400)
 
         rent = RentModel(**kwargs)
         rent.save()
-
+        logging.info('Rent created')
         return make_response(rent_schema.dump(rent), 201)
 
     @use_kwargs(
@@ -49,7 +52,9 @@ class RentRegisterResource(MethodResource, Resource):
 
         rent = RentModel.find_by_id(rent_id)
         if rent:
+            logging.info('Rent found by id in database')
             return make_response(rent_schema.dump(rent), 200)
+        logging.error('Rent not found in database')
         return make_response({'message': 'Item not found'}, 404)
     
     
@@ -63,12 +68,14 @@ class RentRegisterResource(MethodResource, Resource):
 
         user = RentModel.find_by_id(user_id)
         if not user:
+            logging.error('Rent not found in update in database')
             return make_response({'message': 'Rent not found'}, 404)
 
         current_datetime = datetime.now()
         kwargs['rent_date_final'] = current_datetime
         kwargs['total'] = ((current_datetime - user.rent_date_initial).total_seconds() / 60 ) * 0.125
         user.update(**kwargs)
+        logging.info('Rent updated in database')
         return make_response(rent_schema.dump(user), 200)
 
     @use_kwargs(
@@ -90,7 +97,9 @@ class RentRegisterResource(MethodResource, Resource):
 
         user = RentModel.find_by_id(user_id)
         if not user:
+            logging.error('Rent not found in delete in database')
             return make_response({'message': 'User not found'}, 404)
 
         user.delete()
+        logging.info('Rent deleted in database')
         return make_response({'message': 'Rent deleted'}, 200)

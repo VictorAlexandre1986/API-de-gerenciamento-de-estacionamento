@@ -5,6 +5,8 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from marshmallow import fields
 
+from flaskr.utils.log import logging
+
 from datetime import datetime
 
 from flaskr.models.rent import RentModel
@@ -26,7 +28,9 @@ class RentGetPlateResource(MethodResource, Resource):
 
         rent = RentModel.find_by_plate(plate)
         if rent:
+            logging.info('Rent found by plate')
             return make_response(rent_schema.dump(rent), 200)
+        logging.error('Rent not found by plate')
         return make_response({'message': 'Item not found'}, 404)
     
 

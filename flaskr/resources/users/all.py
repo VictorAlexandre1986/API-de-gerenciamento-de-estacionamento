@@ -5,6 +5,8 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from marshmallow import fields
 
+from flaskr.utils.log import logging
+
 from flaskr.models.user import UserModel
 from flaskr.schemas.token import MessageSchema
 from flaskr.schemas.user import (UserResponseSchema, user_schema)
@@ -21,5 +23,7 @@ class UserGetAllResource(MethodResource, Resource):
 
         user = UserModel.find_all()
         if user:
+            logging.info('List of users found')
             return make_response(user_schema.dump(user), 200)
+        logging.error('Users not found')
         return make_response({'message': 'Itens not found'}, 404)

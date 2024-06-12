@@ -6,6 +6,8 @@ from flask_restful import Resource
 from marshmallow import fields
 from flaskr.utils import hash_password
 
+from flaskr.utils.log import logging
+
 from flaskr.models.user import UserModel
 from flaskr.schemas.token import MessageSchema
 from flaskr.schemas.user import (UserRequestGetSchema, UserRequestPostSchema,
@@ -27,7 +29,7 @@ class UserRegisterResource(MethodResource, Resource):
 
         user = UserModel(**kwargs)
         user.save()
-
+        logging.info('User created')
         return make_response(user_schema.dump(user), 201)
 
     @use_kwargs(
@@ -49,7 +51,9 @@ class UserRegisterResource(MethodResource, Resource):
 
         user = UserModel.find_by_id(user_id)
         if user:
+            logging.info('User found by id')
             return make_response(user_schema.dump(user), 200)
+        logging.error('User not found')
         return make_response({'message': 'Item not found'}, 404)
     
     @marshal_with(UserResponseSchema, code=200)
@@ -62,6 +66,7 @@ class UserRegisterResource(MethodResource, Resource):
 
         user = UserModel.find_by_id(user_id)
         if not user:
+            logging.error('User not found in update')
             return make_response({'message': 'User not found'}, 404)
 
         user.update(**kwargs)
@@ -85,7 +90,9 @@ class UserRegisterResource(MethodResource, Resource):
 
         user = UserModel.find_by_id(user_id)
         if not user:
+            logging.error('User not found in delete')
             return make_response({'message': 'User not found'}, 404)
 
         user.delete()
+        logging.info('User deleted')
         return make_response({'message': 'User deleted'}, 200)
